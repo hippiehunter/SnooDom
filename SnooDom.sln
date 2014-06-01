@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SnooDom", "SnooDom", "{266F8396-F853-4C3B-940B-47CDA92B74A7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SnooDom.Shared", "SnooDom.Shared\SnooDom.Shared.vcxitems", "{72096595-CBA5-4D81-938E-20ADCFCC2C15}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SnooDom.Windows", "SnooDom.Windows\SnooDom.Windows.vcxproj", "{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SnooDom.WindowsPhone", "SnooDom.WindowsPhone\SnooDom.WindowsPhone.vcxproj", "{F21692C7-0955-4E64-A684-2272F0E7B664}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SnooDom.Shared\SnooDom.Shared.vcxitems*{72096595-cba5-4d81-938e-20adcfcc2c15}*SharedItemsImports = 9
+		SnooDom.Shared\SnooDom.Shared.vcxitems*{f21692c7-0955-4e64-a684-2272f0e7b664}*SharedItemsImports = 4
+		SnooDom.Shared\SnooDom.Shared.vcxitems*{3434fe66-ee43-4c14-ad32-b6ebdb174c7e}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|ARM = Release|ARM
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|ARM.ActiveCfg = Debug|ARM
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|ARM.Build.0 = Debug|ARM
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|Win32.Build.0 = Debug|Win32
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|x64.ActiveCfg = Debug|x64
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Debug|x64.Build.0 = Debug|x64
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|ARM.ActiveCfg = Release|ARM
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|ARM.Build.0 = Release|ARM
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|Win32.ActiveCfg = Release|Win32
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|Win32.Build.0 = Release|Win32
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|x64.ActiveCfg = Release|x64
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}.Release|x64.Build.0 = Release|x64
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Debug|ARM.Build.0 = Debug|ARM
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Debug|Win32.Build.0 = Debug|Win32
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Debug|x64.ActiveCfg = Debug|Win32
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Release|ARM.ActiveCfg = Release|ARM
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Release|ARM.Build.0 = Release|ARM
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Release|Win32.ActiveCfg = Release|Win32
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Release|Win32.Build.0 = Release|Win32
+		{F21692C7-0955-4E64-A684-2272F0E7B664}.Release|x64.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{72096595-CBA5-4D81-938E-20ADCFCC2C15} = {266F8396-F853-4C3B-940B-47CDA92B74A7}
+		{3434FE66-EE43-4C14-AD32-B6EBDB174C7E} = {266F8396-F853-4C3B-940B-47CDA92B74A7}
+		{F21692C7-0955-4E64-A684-2272F0E7B664} = {266F8396-F853-4C3B-940B-47CDA92B74A7}
+	EndGlobalSection
+EndGlobal
