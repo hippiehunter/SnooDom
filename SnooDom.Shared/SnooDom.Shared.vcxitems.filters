@@ -9,6 +9,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\MarkdownControl.cpp">
       <Filter>View</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)inc\MarkdownButton.xaml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)inc\MarkdownList.xaml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)inc\MarkdownQuote.xaml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)inc\MarkdownTable.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="View">
@@ -34,6 +38,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)inc\Text.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)inc\UnorderedList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)inc\DomRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)inc\MarkdownButton.xaml.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)inc\MarkdownList.xaml.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)inc\MarkdownQuote.xaml.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)inc\MarkdownTable.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)inc\MarkdownButton.xaml">
