@@ -33,9 +33,10 @@ namespace SnooDom
 		property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get(); }
 	};
 
-	public ref class MarkdownControl sealed : UserControl
+	public ref class MarkdownControl sealed : ContentControl
 	{
 	private:
+
 		static DependencyProperty^ _markdownProperty;
 	public:
 		property SnooDom^ Markdown
@@ -47,6 +48,12 @@ namespace SnooDom
 		property IStyleProvider^ StyleProvider;
 
 
+		MarkdownControl(ICommandFactory^ commandFactory, IStyleProvider^ styleProvider)
+		{
+			CommandFactory = commandFactory;
+			StyleProvider = styleProvider;
+		}
+
 		// Using a DependencyProperty as the backing store for Markdown.  This enables animation, styling, binding, etc...
 		static property DependencyProperty^ MarkdownProperty
 		{
@@ -55,20 +62,18 @@ namespace SnooDom
 
 		
 
-		Object^ MakePlain(String^ value)
+		TextBlock^ MakePlain(String^ value)
 		{
 			auto textBlock = ref new TextBlock();
-			textBlock->Text = value;
-			textBlock->Style = StyleProvider->TextBlockStyle;
+			textBlock->Text = value != nullptr ? value : "";
+			if (StyleProvider->TextBlockStyle != nullptr)
+				textBlock->Style = StyleProvider->TextBlockStyle;
 			return textBlock;
 		}
 
 		static void OnMarkdownChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e);
 
-		void RegisterDependencyProperties()
-		{
-			DependencyProperty::Register("Markdown", IDomObject::typeid, IDomObject::typeid, ref new PropertyMetadata(nullptr, ref new Windows::UI::Xaml::PropertyChangedCallback(OnMarkdownChanged)));
-		}
+		
 
 
 	private:
@@ -604,7 +609,8 @@ namespace SnooDom
 			{
 				SnooDomPlainTextVisitor visitor;
 				markdownData->document->Accept(&visitor);
-				d->SetValue(ContentControl::ContentProperty, markdownControl->MakePlain(toPlatformString(visitor.Result)));
+				auto plainControl = markdownControl->MakePlain(toPlatformString(visitor.Result));
+				d->SetValue(ContentControl::ContentProperty, plainControl);
 				break;
 			}
 			case MarkdownCategory::Formatted:
@@ -635,5 +641,5 @@ namespace SnooDom
 			d->SetValue(ContentControl::ContentProperty, toPlatformString("somethings wrong"));
 		}
 	}
-	DependencyProperty^ MarkdownControl::_markdownProperty;
+	DependencyProperty^ MarkdownControl::_markdownProperty = DependencyProperty::Register("Markdown", SnooDom::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr, ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnMarkdownChanged)));
 }

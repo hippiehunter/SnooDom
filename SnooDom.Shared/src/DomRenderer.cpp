@@ -67,7 +67,7 @@ namespace SnooDom
 				return atoi((const char*)&atoiBuff[0]);
 			}
 		}
-		plainText = nullptr;
+		plainText;
 		return 0;
 	}
 
@@ -79,7 +79,7 @@ namespace SnooDom
 		vector<uint32_t> bufferIds;
 		while(offset < text->size)
 		{
-			string plainText = nullptr;
+			string plainText;
 			auto foundId = nextId(text, offset, plainText);
 			if(plainText.size() > 0)
 			{
@@ -107,7 +107,7 @@ namespace SnooDom
 		vector<uint32_t> bufferIds;
 		while(offset < text->size)
 		{
-			std::string plainText = nullptr;
+			std::string plainText;
 			auto foundId = nextId(text, offset, plainText);
 			if(plainText.size() > 0)
 			{
@@ -138,7 +138,7 @@ namespace SnooDom
 		auto state = static_cast<dom_builder_state*>(opaque);
 		//children should not have any elements
 		auto newDomId = state->domId++;
-		auto result = state->memoryPool.make_new<Link>(toPlatformString(link), nullptr, vector<IDomObject*>(), newDomId);
+		auto result = state->memoryPool.make_new<Link>(toPlatformString(link), "", vector<IDomObject*>(), newDomId);
 		state->unclaimedDomIdMap[newDomId] = result;
 		makeDomId(ob, newDomId, opaque);
 		return 1; 
@@ -446,6 +446,7 @@ namespace SnooDom
 		rndr_allocate
 	};
 
+#ifdef _WINRT_DLL
 	static void toBufString(const wchar_t* src, uint32_t srcLength, buf* target, void* opaque, void* (*allocate)(void *opaque, size_t size))
 	{
 		if(src == nullptr)
@@ -460,6 +461,18 @@ namespace SnooDom
 		else
 			target->size = length;
 	}
+#else
+	static void toBufString(const std::string& src, buf* target, void* opaque, void* (*allocate)(void *opaque, size_t size))
+	{
+		if (src.size() == 0)
+		{
+			return;
+		}
+		bufgrow(opaque, allocate, target, src.size());
+		target->size = src.size();
+		memcpy(target->data, src.data(), src.size());
+	}
+#endif
 
 	static const unsigned int snudown_default_md_flags =
 		MKDEXT_NO_INTRA_EMPHASIS |
@@ -471,20 +484,26 @@ namespace SnooDom
 	Document::Document() : IDomContainer(std::vector<IDomObject*>(), 0), State(new dom_builder_state()) {}
 	Document::~Document() {}
 
+	
+#ifdef _WINRT_DLL
 	SnooDom::SnooDom() : document(new Document()) {}
-
 	SnooDom^ SnooDom::MarkdownToDOM(Platform::String^ source)
 	{
 		try
 		{
 			//when this goes out of scope, all memory consumed by this session will be freed
 			auto result = ref new SnooDom();
-			buf* g_ib = bufnew(&result->document->State, mkd_dom.allocate, 1024);
-			buf* g_ob = bufnew(&result->document->State, mkd_dom.allocate, 1024);
-			toBufString(source->Data(), source->Length(), g_ib, &result->document->State, mkd_dom.allocate);
+			if (source == nullptr)
+			{
+				return result;
+			}
+
+			buf* g_ib = bufnew(result->document->State.get(), mkd_dom.allocate, 1024);
+			buf* g_ob = bufnew(result->document->State.get(), mkd_dom.allocate, 1024);
+			toBufString(source->Data(), source->Length(), g_ib, result->document->State.get(), mkd_dom.allocate);
 
 				
-			auto markdownProcessor = sd_markdown_new(snudown_default_md_flags, 100, &mkd_dom, &result->document->State);
+			auto markdownProcessor = sd_markdown_new(snudown_default_md_flags, 100, &mkd_dom, result->document->State.get());
 
 			sd_markdown_render(g_ob, g_ib->data, g_ib->size, markdownProcessor);
 			vector<IDomObject*> topLevelObjects;
@@ -497,6 +516,23 @@ namespace SnooDom
 		}
 	return nullptr;
 	}
+#else
+	std::unique_ptr<Document> SnooDom::MarkdownToDocument(const std::string& source)
+	{
+		std::unique_ptr<Document> document = std::make_unique<Document>();
+		buf* g_ib = bufnew(document->State.get(), mkd_dom.allocate, 1024);
+		buf* g_ob = bufnew(document->State.get(), mkd_dom.allocate, 1024);
+		toBufString(source, g_ib, document->State.get(), mkd_dom.allocate);
+
+
+		auto markdownProcessor = sd_markdown_new(snudown_default_md_flags, 100, &mkd_dom, document->State.get());
+
+		sd_markdown_render(g_ob, g_ib->data, g_ib->size, markdownProcessor);
+		vector<IDomObject*> topLevelObjects;
+		consume_text(g_ob, document->State.get(), topLevelObjects);
+		return document;
+	}
+#endif
 
 	TableColumn::TableColumn(std::vector<IDomObject*>& children, uint32_t domId, int flags) : IDomContainer(children, domId)
 	{

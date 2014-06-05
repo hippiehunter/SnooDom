@@ -18,7 +18,7 @@ namespace SnooDom
 		TableRow(std::vector<IDomObject*>& children, uint32_t domId);
 	};
 
-	public enum class ColumnAlignment
+	enum class ColumnAlignment
 	{
 		Left,
 		Right,

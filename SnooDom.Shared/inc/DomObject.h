@@ -1,7 +1,9 @@
 #pragma once
 
-#include <collection.h>
-#include <windows.foundation.h>
+#include <memory>
+#include <string>
+#include <cstdint>
+#include <vector>
 
 namespace SnooDom
 {

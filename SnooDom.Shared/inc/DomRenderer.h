@@ -1,12 +1,11 @@
 #pragma once
 
 #include "markdown.h"
-#include <collection.h>
+
 #include <vector>
 #include <list>
 #include <map>
 #include <array>
-#include <Windows.Foundation.h>
 #include "DomObject.h"
 #include "Link.h"
 #include "Code.h"
@@ -19,8 +18,14 @@
 #include "Table.h"
 #include "SimpleSessionMemoryPool.h"
 
+#ifdef _WINRT_DLL
+#include <collection.h>
+#include <Windows.Foundation.h>
+#endif
+
 namespace SnooDom
 {
+#ifdef _WINRT_DLL
 	public ref class SnooDom sealed
 	{
 	internal:
@@ -29,6 +34,14 @@ namespace SnooDom
 	public:
 		static SnooDom^ MarkdownToDOM(Platform::String^ source);
 	};
+#else
+	class SnooDom
+	{
+	public:
+		virtual std::unique_ptr<Document> MarkdownToDocument(const std::string& source);
+	};
+#endif
+	
 
 	class SnooDomPlainTextVisitor : public IDomVisitor
 	{
@@ -69,7 +82,7 @@ namespace SnooDom
 		virtual void Visit(LineBreak* lineBreak) { }
 	};
 
-	public enum class MarkdownCategory
+	enum class MarkdownCategory
 	{
 		PlainText,
 		Formatted,

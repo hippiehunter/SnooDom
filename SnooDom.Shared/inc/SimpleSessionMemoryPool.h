@@ -45,6 +45,11 @@ private:
 	}
 
 public:
+	SimpleSessionMemoryPool()
+	{
+		allocBlocks.clear();
+	}
+
 	void* alloc(size_t size)
 	{
 		if(allocBlocks.size() == 0)
