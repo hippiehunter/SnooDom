@@ -51,9 +51,10 @@ namespace Test.Windows
 		public void DontCrash()
         {
 			var helper = new MarkdownHelpers();
-			var mdControl = new SnooDom.MarkdownControl(helper, helper);
-			mdControl.Markdown = SnooDom.SnooDom.MarkdownToDOM(""); ;
-			
+			var mdControl = new SnooDom.MarkdownControl();
+			mdControl.StyleProvider = helper;
+			mdControl.CommandFactory = helper;
+			mdControl.Markdown = SnooDom.SnooDom.MarkdownToDOM("");
 		}
 #if WINRT 
 		[UITestMethod]
@@ -63,7 +64,9 @@ namespace Test.Windows
 		public void BasicLink()
 		{
 			var helper = new MarkdownHelpers();
-			var mdControl = new SnooDom.MarkdownControl(helper, helper);
+			var mdControl = new SnooDom.MarkdownControl();
+			mdControl.StyleProvider = helper;
+			mdControl.CommandFactory = helper;
 			mdControl.Markdown = SnooDom.SnooDom.MarkdownToDOM("http://www.reddit.com");
 			
 		}

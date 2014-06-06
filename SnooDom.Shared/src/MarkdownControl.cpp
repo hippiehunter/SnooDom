@@ -36,28 +36,41 @@ namespace SnooDom
 	public ref class MarkdownControl sealed : ContentControl
 	{
 	private:
-
+		static void OnSomethingContentChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e);
 		static DependencyProperty^ _markdownProperty;
+		static DependencyProperty^ _commandFactoryProperty;
+		static DependencyProperty^ _styleFactoryProperty;
 	public:
 		property SnooDom^ Markdown
 		{
 			SnooDom^ get() { return (SnooDom^)GetValue(_markdownProperty); }
 			void set(SnooDom^ value) { SetValue(_markdownProperty, value); }
 		}
-		property ICommandFactory^ CommandFactory;
-		property IStyleProvider^ StyleProvider;
-
-
-		MarkdownControl(ICommandFactory^ commandFactory, IStyleProvider^ styleProvider)
+		property ICommandFactory^ CommandFactory
 		{
-			CommandFactory = commandFactory;
-			StyleProvider = styleProvider;
+			ICommandFactory^ get() { return (ICommandFactory^)GetValue(_commandFactoryProperty); }
+			void set(ICommandFactory^ value) { SetValue(_commandFactoryProperty, value); }
+		}
+		property IStyleProvider^ StyleProvider
+		{
+			IStyleProvider^ get() { return (IStyleProvider^)GetValue(_styleFactoryProperty); }
+			void set(IStyleProvider^ value) { SetValue(_styleFactoryProperty, value); }
 		}
 
 		// Using a DependencyProperty as the backing store for Markdown.  This enables animation, styling, binding, etc...
 		static property DependencyProperty^ MarkdownProperty
 		{
 			DependencyProperty^ get() { return _markdownProperty; }
+		}
+
+		static property DependencyProperty^ CommandFactoryProperty
+		{
+			DependencyProperty^ get() { return _commandFactoryProperty; }
+		}
+
+		static property DependencyProperty^ StyleProviderProperty
+		{
+			DependencyProperty^ get() { return _styleFactoryProperty; }
 		}
 
 		
@@ -70,11 +83,6 @@ namespace SnooDom
 				textBlock->Style = StyleProvider->TextBlockStyle;
 			return textBlock;
 		}
-
-		static void OnMarkdownChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e);
-
-		
-
 
 	private:
 		static Platform::String^ toPlatformString(const std::string& value)
@@ -591,55 +599,71 @@ namespace SnooDom
 		};
 	};
 
-	void MarkdownControl::OnMarkdownChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
+	void MarkdownControl::OnSomethingContentChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 	{
 		auto markdownControl = dynamic_cast<MarkdownControl^>(d);
-		auto markdownData = dynamic_cast<SnooDom^>(e->NewValue);
+		auto markdownData = markdownControl->Markdown;
+		auto styleProvider = markdownControl->StyleProvider;
+		auto commandFactory = markdownControl->CommandFactory;
 
-		if (markdownControl == nullptr || markdownData == nullptr)
+		if (markdownControl == nullptr)
 			return;
 
-		try
+		//need to make sure we have a command factory and a style provider before we actually bind this
+		if (markdownControl->StyleProvider != nullptr && markdownControl->Markdown != nullptr && markdownControl->CommandFactory != nullptr)
 		{
-			SnooDomCategoryVisitor categoryVisitor;
-			markdownData->document->Accept(&categoryVisitor);
-			switch (categoryVisitor.Category)
+			try
 			{
-			case MarkdownCategory::PlainText:
+				SnooDomCategoryVisitor categoryVisitor;
+				markdownData->document->Accept(&categoryVisitor);
+				switch (categoryVisitor.Category)
+				{
+				case MarkdownCategory::PlainText:
+				{
+					SnooDomPlainTextVisitor visitor;
+					markdownData->document->Accept(&visitor);
+					auto plainControl = markdownControl->MakePlain(toPlatformString(visitor.Result));
+					markdownControl->Content = plainControl;
+					break;
+				}
+				case MarkdownCategory::Formatted:
+				case MarkdownCategory::Full:
+				{
+					SnooDomFullUIVisitor visitor(ref new SolidColorBrush(Colors::White), markdownControl->CommandFactory, markdownControl->StyleProvider);
+					markdownData->document->Accept(&visitor);
+					if (visitor.ResultGroup != nullptr)
+						markdownControl->Content = visitor.ResultGroup;
+					else
+						markdownControl->Content = visitor.Result;
+					break;
+				}
+				default:
+					auto textBlock = ref new TextBlock();
+					textBlock->Text = "";
+					textBlock->Style = markdownControl->StyleProvider->TextBlockStyle;
+					markdownControl->Content = textBlock;
+					break;
+				}
+			}
+			catch (Platform::Exception^ ex)
 			{
-				SnooDomPlainTextVisitor visitor;
-				markdownData->document->Accept(&visitor);
-				auto plainControl = markdownControl->MakePlain(toPlatformString(visitor.Result));
-				d->SetValue(ContentControl::ContentProperty, plainControl);
-				break;
+				markdownControl->Content = markdownControl->MakePlain(ex->ToString());
 			}
-			case MarkdownCategory::Formatted:
-			case MarkdownCategory::Full:
+			catch (...)
 			{
-				SnooDomFullUIVisitor visitor(ref new SolidColorBrush(Colors::White), markdownControl->CommandFactory, markdownControl->StyleProvider);
-				markdownData->document->Accept(&visitor);
-				if (visitor.ResultGroup != nullptr)
-					d->SetValue(ContentControl::ContentProperty, visitor.ResultGroup);
-				else
-					d->SetValue(ContentControl::ContentProperty, visitor.Result);
-				break;
+				markdownControl->Content = toPlatformString("somethings wrong");
 			}
-			default:
-				auto textBlock = ref new TextBlock();
-				textBlock->Text = "";
-				textBlock->Style = markdownControl->StyleProvider->TextBlockStyle;
-				d->SetValue(ContentControl::ContentProperty, textBlock);
-				break;
-			}
-		}
-		catch (Platform::Exception^ ex)
-		{
-			d->SetValue(ContentControl::ContentProperty, markdownControl->MakePlain(ex->ToString()));
-		}
-		catch (...)
-		{
-			d->SetValue(ContentControl::ContentProperty, toPlatformString("somethings wrong"));
 		}
 	}
-	DependencyProperty^ MarkdownControl::_markdownProperty = DependencyProperty::Register("Markdown", SnooDom::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr, ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnMarkdownChanged)));
+	DependencyProperty^ MarkdownControl::_markdownProperty = DependencyProperty::Register("Markdown", 
+		SnooDom::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr, 
+		ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
+
+	DependencyProperty^ MarkdownControl::_commandFactoryProperty = DependencyProperty::Register("CommandFactory",
+		ICommandFactory::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr, 
+		ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
+
+	DependencyProperty^ MarkdownControl::_styleFactoryProperty = DependencyProperty::Register("StyleFactory", 
+		IStyleFactory::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr, 
+		ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
 }
