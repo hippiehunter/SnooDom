@@ -3,11 +3,11 @@
     <metadata minClientVersion="2.5">
         <id>SnooDom</id>
         <version>1.0.0.0</version>
-        <authors>Synergex International Corporation</authors>
+        <authors>HippieHunter</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<projectUrl>http://www.github.com/HippieHunter/SnooDom</projectUrl>
         <description>SnooDom converts Markdown into WindowsStore/WindowsPhone UI tree instead of HTML</description>
-		<copyright>Copyright © Synergex International Corporation</copyright>
-        <tags>markdown reddit windowsphone windowsstore xaml</tags>
+		<tags>markdown reddit windowsphone windowsstore xaml</tags>
     </metadata>
     <files>
 		<file src="nuget_build\_._" target="lib\wpa81\_._" />
@@ -20,22 +20,22 @@
 		<file src="Release\SnooDom.WindowsPhone\SnooDom.dll" target="build\wpa81\x86\SnooDom.dll" />
 		<file src="Release\SnooDom.WindowsPhone\SnooDom.pdb" target="build\wpa81\x86\SnooDom.pdb" />
 		
-		<file src="Release\SnooDom.WindowsPhone\SnooDom.dll" target="build\wpa81\arm\SnooDom.dll" />
-		<file src="Release\SnooDom.WindowsPhone\SnooDom.pdb" target="build\wpa81\arm\SnooDom.pdb" />
+		<file src="arm\Release\SnooDom.WindowsPhone\SnooDom.dll" target="build\wpa81\arm\SnooDom.dll" />
+		<file src="arm\Release\SnooDom.WindowsPhone\SnooDom.pdb" target="build\wpa81\arm\SnooDom.pdb" />
 		
 		<file src="Release\SnooDom.Windows\SnooDom.winmd" target="build\win81\SnooDom.winmd" />
 		<file src="Release\SnooDom.Windows\SnooDom.pri" target="build\win81\SnooDom.pri" />
 		<file src="Release\SnooDom.Windows\SnooDom.dll" target="build\win81\SnooDom.dll" />
 		<file src="Release\SnooDom.Windows\*.xbf" target="build\win81\SnooDom\" />
 		
-		<file src="Release\SnooDom.Windows\SnooDom.dll" target="build\win81\arm\SnooDom.dll" />
-		<file src="Release\SnooDom.Windows\SnooDom.pdb" target="build\win81\arm\SnooDom.pdb" />
+		<file src="arm\Release\SnooDom.Windows\SnooDom.dll" target="build\win81\arm\SnooDom.dll" />
+		<file src="arm\Release\SnooDom.Windows\SnooDom.pdb" target="build\win81\arm\SnooDom.pdb" />
 		
 		<file src="Release\SnooDom.Windows\SnooDom.dll" target="build\win81\x86\SnooDom.dll" />
 		<file src="Release\SnooDom.Windows\SnooDom.pdb" target="build\win81\x86\SnooDom.pdb" />
 		
-		<file src="Release\SnooDom.Windows\SnooDom.dll" target="build\win81\x64\SnooDom.dll" />
-		<file src="Release\SnooDom.Windows\SnooDom.pdb" target="build\win81\x64\SnooDom.pdb" />
+		<file src="x64\Release\SnooDom.Windows\SnooDom.dll" target="build\win81\x64\SnooDom.dll" />
+		<file src="x64\Release\SnooDom.Windows\SnooDom.pdb" target="build\win81\x64\SnooDom.pdb" />
 		
 		<file src="nuget_build\wpa81\SnooDom.targets" target="build\wpa81\SnooDom.targets" />
 		<file src="nuget_build\win81\SnooDom.targets" target="build\win81\SnooDom.targets" />
