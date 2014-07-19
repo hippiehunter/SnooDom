@@ -33,6 +33,7 @@ namespace SnooDom
 		SnooDom();
 	public:
 		static SnooDom^ MarkdownToDOM(Platform::String^ source);
+    Windows::Foundation::Collections::IMap<Platform::String^, Platform::String^>^ GetLinks();
 	};
 #else
 	class SnooDom
@@ -190,81 +191,5 @@ namespace SnooDom
 		}
 	};
 
-	class SnooDomLinkVisitor : public IDomVisitor
-	{
-
-	public:
-		std::vector<Link*> Links;
-
-		virtual void Visit(Text* text)
-		{
-		}
-		virtual void Visit(Code* code)
-		{
-		}
-		virtual void Visit(Quote* quote)
-		{
-		}
-		virtual void Visit(OrderedList* orderedList)
-		{
-			for (auto elem : orderedList->Children)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(UnorderedList* unorderedList)
-		{
-			for (auto elem : unorderedList->Children)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(HorizontalRule* horizontalRule)
-		{
-
-		}
-		virtual void Visit(Table* table)
-		{
-			for (auto elem : table->Rows)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(Link* link)
-		{
-			Links.push_back(link);
-		}
-		virtual void Visit(Paragraph* paragraph)
-		{
-			for (auto elem : paragraph->Children)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(Document* document)
-		{
-			for (auto elem : document->Children)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(TableRow* tableRow)
-		{
-			for (auto elem : tableRow->Columns)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(TableColumn* tableColumn)
-		{
-			for (auto elem : tableColumn->Children)
-			{
-				elem->Accept(this);
-			}
-		}
-		virtual void Visit(LineBreak* lineBreak)
-		{
-
-		}
-	};
+	
 }

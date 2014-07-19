@@ -1,5 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "DomRenderer.h"
+#ifdef _WINRT_DLL
+#include <collection.h>
+using Windows::Foundation::Collections::IMap;
+using Platform::Collections::Map;
+using Platform::String;
+#endif
 
 using std::vector;
 using std::string;
@@ -8,6 +14,8 @@ using std::array;
 using std::map;
 using std::dynamic_pointer_cast;
 using std::shared_ptr;
+
+using namespace SnooDom;
 
 namespace SnooDom
 {
@@ -560,3 +568,112 @@ namespace SnooDom
 		}
 	}
 }
+#ifdef _WINRT_DLL
+class SnooDomLinkVisitor : public IDomVisitor
+{
+public:
+  static Platform::String^ toPlatformString(const std::string& value)
+  {
+    if (value.size() == 0)
+      return nullptr;
+
+    wchar_t* buffer = (wchar_t*)_alloca(value.size() * 2);
+    auto len = MultiByteToWideChar(CP_UTF8, 0, value.data(), value.size(), buffer, value.size() * 2);
+    return ref new Platform::String(buffer, len);
+  }
+
+  Platform::Collections::Map<Platform::String^, Platform::String^>^ Result;
+  SnooDomLinkVisitor()
+  {
+    Result = ref new Platform::Collections::Map<Platform::String^, Platform::String^>();
+  }
+
+  virtual void Visit(Text* text) {}
+  virtual void Visit(Code* code) {}
+  virtual void Visit(Quote* quote)
+  {
+    for (auto elem : quote->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(OrderedList* orderedList)
+  {
+    for (auto elem : orderedList->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(UnorderedList* unorderedList)
+  {
+    for (auto elem : unorderedList->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(HorizontalRule* horizontalRule) {}
+  virtual void Visit(Table* table)
+  {
+    for (auto elem : table->Headers)
+    {
+      elem->Accept(this);
+    }
+
+    for (auto elem : table->Rows)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(Link* link)
+  {
+    auto linkUrl = toPlatformString(link->Url);
+    SnooDomPlainTextVisitor plainText;
+    for (auto obj : link->Display)
+    {
+      obj->Accept(&plainText);
+    }
+    auto display = toPlatformString(plainText.Result);
+    if (!Result->HasKey(linkUrl))
+    {
+      Result->Insert(linkUrl, display);
+    }
+  }
+  virtual void Visit(Paragraph* paragraph)
+  {
+    for (auto elem : paragraph->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(Document* document)
+  {
+    for (auto elem : document->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(TableRow* tableRow)
+  {
+    for (auto elem : tableRow->Columns)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(TableColumn* tableColumn)
+  {
+    for (auto elem : tableColumn->Children)
+    {
+      elem->Accept(this);
+    }
+  }
+  virtual void Visit(LineBreak* lineBreak) {}
+};
+
+IMap<String^, String^>^ ::SnooDom::SnooDom::GetLinks()
+{
+  SnooDomLinkVisitor linkVisitor;
+  document->Accept(&linkVisitor);
+
+  return linkVisitor.Result;
+}
+#endif
