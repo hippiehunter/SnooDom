@@ -15,7 +15,24 @@ using std::map;
 using std::dynamic_pointer_cast;
 using std::shared_ptr;
 
-using namespace SnooDom;
+using SnooDom::IDomObject;
+using SnooDom::Code;
+using SnooDom::HorizontalRule;
+using SnooDom::IDomContainer;
+using SnooDom::IDomVisitor;
+using SnooDom::LineBreak;
+using SnooDom::Link;
+using SnooDom::OrderedList;
+using SnooDom::Paragraph;
+using SnooDom::Quote;
+using SnooDom::SnooDomCategoryVisitor;
+using SnooDom::SnooDomPlainTextVisitor;
+using SnooDom::Table;
+using SnooDom::Text;
+using SnooDom::TableColumn;
+using SnooDom::TableRow;
+using SnooDom::UnorderedList;
+using SnooDom::Document;
 
 namespace SnooDom
 {
@@ -516,6 +533,7 @@ namespace SnooDom
 			sd_markdown_render(g_ob, g_ib->data, g_ib->size, markdownProcessor);
 			vector<IDomObject*> topLevelObjects;
 			consume_text(g_ob, result->document->State.get(), topLevelObjects);
+      result->document->Children = topLevelObjects;
 			return result;
 		}
 		catch(...)
@@ -538,6 +556,7 @@ namespace SnooDom
 		sd_markdown_render(g_ob, g_ib->data, g_ib->size, markdownProcessor);
 		vector<IDomObject*> topLevelObjects;
 		consume_text(g_ob, document->State.get(), topLevelObjects);
+    document->Children = topLevelObjects;
 		return document;
 	}
 #endif
@@ -568,10 +587,11 @@ namespace SnooDom
 		}
 	}
 }
-#ifdef _WINRT_DLL
+
 class SnooDomLinkVisitor : public IDomVisitor
 {
 public:
+#ifdef _WINRT_DLL
   static Platform::String^ toPlatformString(const std::string& value)
   {
     if (value.size() == 0)
@@ -583,10 +603,19 @@ public:
   }
 
   Platform::Collections::Map<Platform::String^, Platform::String^>^ Result;
+
   SnooDomLinkVisitor()
   {
     Result = ref new Platform::Collections::Map<Platform::String^, Platform::String^>();
   }
+#else
+  static const std::string& toPlatformString(const std::string& value)
+  {
+    return value;
+  }
+
+  map<string, string> Result;
+#endif
 
   virtual void Visit(Text* text) {}
   virtual void Visit(Code* code) {}
@@ -633,10 +662,17 @@ public:
       obj->Accept(&plainText);
     }
     auto display = toPlatformString(plainText.Result);
+#if _WINRT_DLL
     if (!Result->HasKey(linkUrl))
     {
       Result->Insert(linkUrl, display);
     }
+#else
+    if (Result.find(linkUrl) == Result.end())
+    {
+      Result[linkUrl] = display;
+    }
+#endif
   }
   virtual void Visit(Paragraph* paragraph)
   {
@@ -668,8 +704,16 @@ public:
   }
   virtual void Visit(LineBreak* lineBreak) {}
 };
-
+#ifdef _WINRT_DLL
 IMap<String^, String^>^ ::SnooDom::SnooDom::GetLinks()
+{
+  SnooDomLinkVisitor linkVisitor;
+  document->Accept(&linkVisitor);
+
+  return linkVisitor.Result;
+}
+#else
+map<string, string> SnooDom::SnooDom::GetLinks(std::unique_ptr<Document>& document)
 {
   SnooDomLinkVisitor linkVisitor;
   document->Accept(&linkVisitor);

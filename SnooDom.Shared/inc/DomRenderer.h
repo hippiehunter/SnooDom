@@ -40,6 +40,7 @@ namespace SnooDom
 	{
 	public:
 		virtual std::unique_ptr<Document> MarkdownToDocument(const std::string& source);
+    virtual std::map<std::string, std::string> GetLinks(std::unique_ptr<Document>& document);
 	};
 #endif
 	

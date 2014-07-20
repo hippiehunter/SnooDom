@@ -42,34 +42,7 @@ namespace Test.Windows
 
     [TestClass]
     public class SnuDownTests
-    {
-#if WINRT 
-		[UITestMethod]
-#else
-		[TestMethod]
-#endif
-		public void DontCrash()
-        {
-			var helper = new MarkdownHelpers();
-			var mdControl = new SnooDom.MarkdownControl();
-			mdControl.StyleProvider = helper;
-			mdControl.CommandFactory = helper;
-			mdControl.Markdown = SnooDom.SnooDom.MarkdownToDOM("");
-		}
-#if WINRT 
-		[UITestMethod]
-#else
-		[TestMethod]
-#endif
-		public void BasicLink()
-		{
-			var helper = new MarkdownHelpers();
-			var mdControl = new SnooDom.MarkdownControl();
-			mdControl.StyleProvider = helper;
-			mdControl.CommandFactory = helper;
-			mdControl.Markdown = SnooDom.SnooDom.MarkdownToDOM("http://www.reddit.com");
-			
-		}
+	{
 		[TestMethod]
 		public void advancedLink()
 		{
@@ -190,6 +163,16 @@ namespace Test.Windows
 		{
 			SnooDom.SnooDom.MarkdownToDOM("[Test](git://github.com)");
 		}
+
+		[TestMethod]
+		public void NotHttpLink2()
+		{
+			var dom = SnooDom.SnooDom.MarkdownToDOM("[Test](git://github.com)");
+			var link =dom.GetLinks().First();
+			if (link.Key != "git://github.com" || link.Value != "Test")
+				throw new Exception("link didnt parse correctly");
+		}
+
 		[TestMethod]
 		public void Speculation()
 		{
