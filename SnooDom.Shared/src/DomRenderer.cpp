@@ -531,9 +531,7 @@ namespace SnooDom
 			auto markdownProcessor = sd_markdown_new(snudown_default_md_flags, 100, &mkd_dom, result->document->State.get());
 
 			sd_markdown_render(g_ob, g_ib->data, g_ib->size, markdownProcessor);
-			vector<IDomObject*> topLevelObjects;
-			consume_text(g_ob, result->document->State.get(), topLevelObjects);
-      result->document->Children = topLevelObjects;
+      consume_text(g_ob, result->document->State.get(), result->document->Children);
 			return result;
 		}
 		catch(...)
