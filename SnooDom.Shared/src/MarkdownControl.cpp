@@ -152,7 +152,7 @@ namespace SnooDom
 
 			void DirectlyPlaceUIContent(UIElement^ element)
 			{
-				auto rtb = dynamic_cast<RichTextBlock^>(ResultGroup->Children->GetAt(ResultGroup->Children->Size - 1));
+				
 				if (ResultGroup == nullptr)
 				{
 					ResultGroup = ref new StackPanel();
@@ -167,10 +167,15 @@ namespace SnooDom
 						ResultGroup->Children->Append(Result);
 					}
 				}
-				else if (rtb != nullptr && rtb->Blocks->Size == 0)
-				{
-					ResultGroup->Children->RemoveAt(ResultGroup->Children->Size - 1);
-				}
+        else
+        {
+          auto rtb = dynamic_cast<RichTextBlock^>(ResultGroup->Children->GetAt(ResultGroup->Children->Size - 1));
+          if (rtb != nullptr && rtb->Blocks->Size == 0)
+          {
+            ResultGroup->Children->RemoveAt(ResultGroup->Children->Size - 1);
+          }
+        }
+
 				ResultGroup->Children->Append(element);
 
 				Result = ref new RichTextBlock();

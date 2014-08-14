@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F21692C7-0955-4E64-A684-2272F0E7B664}</ProjectGuid>
+    <ProjectGuid>{3434FE66-EE43-4C14-AD32-B6EBDB174C7E}</ProjectGuid>
     <RootNamespace>SnooDom</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
