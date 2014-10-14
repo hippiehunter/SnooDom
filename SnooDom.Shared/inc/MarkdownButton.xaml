@@ -9,15 +9,17 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     FontFamily="Segoe WP"
-    x:Name="buttonRoot" Height="20"
+    x:Name="buttonRoot"
     HorizontalContentAlignment="Left"
     VerticalContentAlignment="Top"
-    BorderThickness="0" Margin="0,0,0,-3" Padding="0,0,0,0">
+    FontSize="16" FontWeight="Normal"
+    BorderThickness="0" Margin="0,0,0,0" Padding="0,0,0,0">
 
     <Button.Template>
         <ControlTemplate TargetType="Button">
             <Grid Margin="0,-5,0,0" x:Name="container">
                 <ContentControl HorizontalAlignment="Left" Padding="0" Margin="0"
+                       FontWeight="Normal"
                        Content="{Binding ElementName=buttonRoot, Path=RealContent}"/>
 
                 <VisualStateManager.VisualStateGroups>
