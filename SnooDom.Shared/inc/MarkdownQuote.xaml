@@ -10,6 +10,7 @@
     d:DesignWidth="400">
 
     <Border Margin="5,0,0,0" BorderThickness="3,0,0,0" BorderBrush="Blue">
-        <ContentControl x:Name="content" Margin="10,5,5,5"/>
+        <ContentControl x:Name="content" Margin="0,0,6,0"
+                        FontSize="16" FontWeight="Normal"/>
     </Border>
 </UserControl>
