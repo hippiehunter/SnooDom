@@ -512,6 +512,14 @@ namespace SnooDom
 	
 #ifdef _WINRT_DLL
 	SnooDom::SnooDom() : document(new Document()) {}
+
+  bool SnooDom::IsPlainText()
+  {
+    SnooDomCategoryVisitor categoryVisitor;
+    document->Accept(&categoryVisitor);
+    return categoryVisitor.Category == ::SnooDom::MarkdownCategory::PlainText;
+  }
+
 	SnooDom^ SnooDom::MarkdownToDOM(Platform::String^ source)
 	{
 		try
