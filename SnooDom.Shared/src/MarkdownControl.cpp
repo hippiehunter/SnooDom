@@ -124,7 +124,7 @@ namespace SnooDom
 			}
 			void MaybeSplitForParagraph()
 			{
-				if (_textLengthInCurrent > 1000)
+				if (_textLengthInCurrent > 2000)
 				{
 					if (ResultGroup == nullptr)
 					{
@@ -408,8 +408,6 @@ namespace SnooDom
 						item->Accept(&categoryVisitor);
 					}
 				}
-				else
-					return;
 
 				auto hyperLink = ref new Windows::UI::Xaml::Documents::Hyperlink();
 				if (categoryVisitor.Category == MarkdownCategory::PlainText)
