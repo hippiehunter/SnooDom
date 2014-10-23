@@ -35,6 +35,7 @@ namespace SnooDom
 		static SnooDom^ MarkdownToDOM(Platform::String^ source);
     Windows::Foundation::Collections::IMap<Platform::String^, Platform::String^>^ GetLinks();
     bool IsPlainText();
+    Platform::String^ BasicText();
 	};
 #else
 	class SnooDom

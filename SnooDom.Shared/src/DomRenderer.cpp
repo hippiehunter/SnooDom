@@ -718,6 +718,15 @@ IMap<String^, String^>^ ::SnooDom::SnooDom::GetLinks()
 
   return linkVisitor.Result;
 }
+
+Platform::String^ ::SnooDom::SnooDom::BasicText()
+{
+  SnooDomPlainTextVisitor plainTextVisitor;
+  document->Accept(&plainTextVisitor);
+
+  return SnooDomLinkVisitor::toPlatformString(plainTextVisitor.Result);
+}
+
 #else
 map<string, string> SnooDom::SnooDom::GetLinks(std::unique_ptr<Document>& document)
 {
