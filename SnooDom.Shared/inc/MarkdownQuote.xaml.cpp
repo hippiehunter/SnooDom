@@ -26,11 +26,12 @@ MarkdownQuote::MarkdownQuote(Platform::String^ contents, Windows::UI::Xaml::Styl
 	auto textBlock = ref new TextBlock();
 	textBlock->Text = contents;
 	textBlock->Style = style;
+    content->Content = textBlock;
 
 }
 MarkdownQuote::MarkdownQuote(Windows::UI::Xaml::UIElement^ contents)
 {
 	InitializeComponent();
-	Content = contents;
+    content->Content = contents;
 }
 
