@@ -124,22 +124,6 @@ namespace SnooDom
             }
             void MaybeSplitForParagraph()
             {
-                if (_textLengthInCurrent > 2000)
-                {
-                    if (ResultGroup == nullptr)
-                    {
-                        ResultGroup = ref new StackPanel();
-                        ResultGroup->Orientation = Orientation::Vertical;
-                        ResultGroup->Children->Append(Result);
-                        Result->Margin = Thickness(-6);
-                    }
-
-                    Result = ref new RichTextBlock();
-                    Result->Style = _styleProvider->RichTextBlockStyle;
-                    ResultGroup->Children->Append(Result);
-                    _textLengthInCurrent = 0;
-                }
-
                 if (_currentParagraph != nullptr)
                 {
                     _currentParagraph->Inlines->Append(ref new Windows::UI::Xaml::Documents::LineBreak());
