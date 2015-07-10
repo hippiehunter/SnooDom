@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>593cb082-d03d-44c7-b1b9-4a0a341cdd67</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="..\autolink.cpp" />
+    <ClCompile Include="..\buffer.cpp" />
+    <ClCompile Include="..\DomRenderer.cpp" />
+    <ClCompile Include="..\markdown.cpp" />
+    <ClCompile Include="..\MarkdownControl.cpp" />
+    <ClCompile Include="..\stack.cpp" />
+    <ClCompile Include="..\MarkdownButton.xaml.cpp" />
+    <ClCompile Include="..\MarkdownList.xaml.cpp" />
+    <ClCompile Include="..\MarkdownQuote.xaml.cpp" />
+    <ClCompile Include="..\MarkdownTable.xaml.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\autolink.h" />
+    <ClInclude Include="..\buffer.h" />
+    <ClInclude Include="..\Code.h" />
+    <ClInclude Include="..\DomObject.h" />
+    <ClInclude Include="..\DomRenderer.h" />
+    <ClInclude Include="..\HorizontalRule.h" />
+    <ClInclude Include="..\html_blocks.h" />
+    <ClInclude Include="..\LineBreak.h" />
+    <ClInclude Include="..\Link.h" />
+    <ClInclude Include="..\markdown.h" />
+    <ClInclude Include="..\OrderedList.h" />
+    <ClInclude Include="..\Paragraph.h" />
+    <ClInclude Include="..\Quote.h" />
+    <ClInclude Include="..\SimpleSessionMemoryPool.h" />
+    <ClInclude Include="..\stack.h" />
+    <ClInclude Include="..\Table.h" />
+    <ClInclude Include="..\Text.h" />
+    <ClInclude Include="..\UnorderedList.h" />
+    <ClInclude Include="..\MarkdownButton.xaml.h" />
+    <ClInclude Include="..\MarkdownList.xaml.h" />
+    <ClInclude Include="..\MarkdownQuote.xaml.h" />
+    <ClInclude Include="..\MarkdownTable.xaml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="..\MarkdownButton.xaml" />
+    <Page Include="..\MarkdownList.xaml" />
+    <Page Include="..\MarkdownQuote.xaml" />
+    <Page Include="..\MarkdownTable.xaml" />
+  </ItemGroup>
+</Project>
