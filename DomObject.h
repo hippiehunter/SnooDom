@@ -22,6 +22,8 @@ namespace SnooDom
 	class LineBreak;
 	class IDomVisitor;
 
+    ref class SimpleSessionMemoryPool;
+
 	class IDomObject
 	{
 	public:
@@ -64,7 +66,7 @@ namespace SnooDom
 	{
 	public:
 		std::unique_ptr<dom_builder_state> State;
-		Document();
+		Document(SimpleSessionMemoryPool^ memoryPool);
 		~Document();
 		virtual void Accept(IDomVisitor* visitor){ visitor->Visit(this); }
 	};
