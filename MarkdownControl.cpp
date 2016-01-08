@@ -33,6 +33,23 @@ namespace SnooDom
         property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get(); }
     };
 
+    public ref class MarkdownHelper sealed : ICommandFactory, IStyleProvider
+    {
+    public:
+        virtual Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::Documents::Hyperlink^, Windows::UI::Xaml::Documents::HyperlinkClickEventArgs^>^ MakeLinkCommand(Platform::String^ url)
+        {
+            return ref new Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::Documents::Hyperlink^, Windows::UI::Xaml::Documents::HyperlinkClickEventArgs^>([](Windows::UI::Xaml::Documents::Hyperlink^ link, Windows::UI::Xaml::Documents::HyperlinkClickEventArgs^ bla) -> void
+            {
+                //Do whatever navigation needs to happen
+            });
+        }
+
+        virtual property Windows::UI::Xaml::Style^ RichTextBlockStyle { Windows::UI::Xaml::Style^ get() { return dynamic_cast<Windows::UI::Xaml::Style^>(Application::Current->Resources->Lookup("MarkdownRichTextStyle")); } }
+        virtual property Windows::UI::Xaml::Style^ TextBlockStyle { Windows::UI::Xaml::Style^ get() { return dynamic_cast<Windows::UI::Xaml::Style^>(Application::Current->Resources->Lookup("MarkdownTextStyle")); } }
+        virtual property Windows::UI::Xaml::Style^ BorderStyle { Windows::UI::Xaml::Style^ get() { return dynamic_cast<Windows::UI::Xaml::Style^>(Application::Current->Resources->Lookup("MarkdownBorderStyle")); } }
+        virtual property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get() { return dynamic_cast<Windows::UI::Xaml::Style^>(Application::Current->Resources->Lookup("MarkdownRunStyle")); } }
+    };
+
     public ref class MarkdownControl sealed : ContentControl
     {
     private:
@@ -41,10 +58,10 @@ namespace SnooDom
         static DependencyProperty^ _commandFactoryProperty;
         static DependencyProperty^ _styleFactoryProperty;
     public:
-        property SnooDom^ Markdown
+        property Object^ Markdown
         {
-            SnooDom^ get() { return (SnooDom^)GetValue(_markdownProperty); }
-            void set(SnooDom^ value) { SetValue(_markdownProperty, value); }
+            Object^ get() { return (Object^)GetValue(_markdownProperty); }
+            void set(Object^ value) { SetValue(_markdownProperty, value); }
         }
         property ICommandFactory^ CommandFactory
         {
@@ -258,15 +275,15 @@ namespace SnooDom
                     {
                         switch (column->Alignment)
                         {
-                            case ColumnAlignment::Center:
-                                results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Center);
-                                break;
-                            case ColumnAlignment::Left:
-                                results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Left);
-                                break;
-                            case ColumnAlignment::Right:
-                                results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Right);
-                                break;
+                        case ColumnAlignment::Center:
+                            results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Center);
+                            break;
+                        case ColumnAlignment::Left:
+                            results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Left);
+                            break;
+                        case ColumnAlignment::Right:
+                            results.back()->SetValue(FrameworkElement::HorizontalAlignmentProperty, Windows::UI::Xaml::HorizontalAlignment::Right);
+                            break;
                         }
 
                         results.back()->SetValue(FrameworkElement::VerticalAlignmentProperty, Windows::UI::Xaml::VerticalAlignment::Top);
@@ -307,21 +324,21 @@ namespace SnooDom
                 {
                     switch (text->HeaderSize)
                     {
-                        case 1:
-                            madeRun->FontSize = 24;
-                            break;
-                        case 2:
-                            madeRun->FontSize = 24;
-                            madeRun->FontWeight = FontWeights::Bold;
-                            madeRun->Foreground = _forgroundBrush;
-                            break;
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                            madeRun->FontSize = 28;
-                            madeRun->FontWeight = FontWeights::Bold;
-                            break;
+                    case 1:
+                        madeRun->FontSize = 24;
+                        break;
+                    case 2:
+                        madeRun->FontSize = 24;
+                        madeRun->FontWeight = FontWeights::Bold;
+                        madeRun->Foreground = _forgroundBrush;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        madeRun->FontSize = 28;
+                        madeRun->FontWeight = FontWeights::Bold;
+                        break;
                     }
                     MaybeSplitForParagraph();
                     _currentParagraph->Inlines->Append(madeRun);
@@ -378,7 +395,7 @@ namespace SnooDom
             {
                 if (link->Display.size() == 0 &&
                     (StringStartsWith(link->Url, "#") || StringStartsWith(link->Url, "/#") ||
-                    StringStartsWith(link->Url, "//#") || (StringStartsWith(link->Url, "/") && std::count(link->Url.begin(), link->Url.end(), '/') == 1)))
+                        StringStartsWith(link->Url, "//#") || (StringStartsWith(link->Url, "/") && std::count(link->Url.begin(), link->Url.end(), '/') == 1)))
                 {
                     return;
                 }
@@ -431,21 +448,21 @@ namespace SnooDom
                         {
                             switch (text->HeaderSize)
                             {
-                                case 1:
-                                    inlineContainer->FontSize = 24;
-                                    break;
-                                case 2:
-                                    inlineContainer->FontSize = 24;
-                                    inlineContainer->FontWeight = FontWeights::Bold;
-                                    inlineContainer->Foreground = _forgroundBrush;
-                                    break;
-                                case 3:
-                                case 4:
-                                case 5:
-                                case 6:
-                                    inlineContainer->FontSize = 28;
-                                    inlineContainer->FontWeight = FontWeights::Bold;
-                                    break;
+                            case 1:
+                                inlineContainer->FontSize = 24;
+                                break;
+                            case 2:
+                                inlineContainer->FontSize = 24;
+                                inlineContainer->FontWeight = FontWeights::Bold;
+                                inlineContainer->Foreground = _forgroundBrush;
+                                break;
+                            case 3:
+                            case 4:
+                            case 5:
+                            case 6:
+                                inlineContainer->FontSize = 28;
+                                inlineContainer->FontWeight = FontWeights::Bold;
+                                break;
                             }
                         }
 
@@ -604,14 +621,17 @@ namespace SnooDom
 
             try
             {
-                SnooDomCategoryVisitor categoryVisitor;
-                markdownData->document->Accept(&categoryVisitor);
-                switch (categoryVisitor.Category)
+                auto markdownObject = dynamic_cast<::SnooDom::SnooDom^>(markdownData);
+                if (markdownObject != nullptr)
                 {
+                    SnooDomCategoryVisitor categoryVisitor;
+                    markdownObject->document->Accept(&categoryVisitor);
+                    switch (categoryVisitor.Category)
+                    {
                     case MarkdownCategory::PlainText:
                     {
                         SnooDomPlainTextVisitor visitor;
-                        markdownData->document->Accept(&visitor);
+                        markdownObject->document->Accept(&visitor);
                         auto plainControl = markdownControl->MakePlain(toPlatformString(visitor.Result));
                         markdownControl->Content = plainControl;
                         break;
@@ -620,7 +640,7 @@ namespace SnooDom
                     case MarkdownCategory::Full:
                     {
                         SnooDomFullUIVisitor visitor(ref new SolidColorBrush(Colors::White), markdownControl->CommandFactory, markdownControl->StyleProvider);
-                        markdownData->document->Accept(&visitor);
+                        markdownObject->document->Accept(&visitor);
                         if (visitor.ResultGroup != nullptr)
                             markdownControl->Content = visitor.ResultGroup;
                         else
@@ -633,6 +653,12 @@ namespace SnooDom
                         textBlock->Style = markdownControl->StyleProvider->TextBlockStyle;
                         markdownControl->Content = textBlock;
                         break;
+                    }
+                }
+                else
+                {
+                    auto markdownString = dynamic_cast<String^>(markdownData);
+                    markdownControl->Content = markdownControl->MakePlain(markdownString != nullptr ? markdownString : "");
                 }
             }
             catch (Platform::Exception^ ex)
@@ -646,14 +672,14 @@ namespace SnooDom
         }
     }
     DependencyProperty^ MarkdownControl::_markdownProperty = DependencyProperty::Register("Markdown",
-        SnooDom::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr,
-        ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
+        Object::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr,
+            ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
 
     DependencyProperty^ MarkdownControl::_commandFactoryProperty = DependencyProperty::Register("CommandFactory",
         ICommandFactory::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr,
-        ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
+            ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
 
     DependencyProperty^ MarkdownControl::_styleFactoryProperty = DependencyProperty::Register("StyleFactory",
         IStyleFactory::typeid, MarkdownControl::typeid, ref new PropertyMetadata(nullptr,
-        ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
+            ref new Windows::UI::Xaml::PropertyChangedCallback(&MarkdownControl::OnSomethingContentChanged)));
 }
