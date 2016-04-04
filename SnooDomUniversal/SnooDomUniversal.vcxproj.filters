@@ -50,4 +50,7 @@
     <Page Include="..\MarkdownQuote.xaml" />
     <Page Include="..\MarkdownTable.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>
