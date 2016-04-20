@@ -97,7 +97,7 @@ namespace SnooDom
             auto textBlock = ref new TextBlock();
             textBlock->Text = value != nullptr ? value : "";
             if (StyleProvider->TextBlockStyle != nullptr)
-                textBlock->Style = StyleProvider->TextBlockStyle;
+                textBlock->SetValue(FrameworkElement::StyleProperty, StyleProvider->TextBlockStyle);
             return textBlock;
         }
 
