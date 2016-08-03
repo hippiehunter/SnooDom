@@ -33,6 +33,12 @@ namespace SnooDom
         property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get(); }
     };
 
+    public interface class IMarkdownUtility
+    {
+    public:
+        virtual Platform::String^ HTMLDecode(Platform::String^ input, int recurseCount);
+    };
+
     public ref class MarkdownHelper sealed : ICommandFactory, IStyleProvider
     {
     public:
@@ -102,6 +108,19 @@ namespace SnooDom
         }
 
     private:
+        static Platform::String^ htmlDecodeToPlatformString(const std::string& value, IMarkdownUtility^ utility, int recurseCount)
+        {
+            if (utility != nullptr)
+            {
+                return utility->HTMLDecode(toPlatformString(value), recurseCount);
+            }
+            else
+            {
+                //warning, not going to get decoded if the utlity wasnt available
+                return toPlatformString(value);
+            }
+        }
+
         static Platform::String^ toPlatformString(const std::string& value)
         {
             if (value.size() == 0)
@@ -251,7 +270,7 @@ namespace SnooDom
                     }
                     else
                     {
-                        SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider);
+                        SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider, _quoteDepth);
                         auto itemPP = dynamic_cast<::SnooDom::Paragraph*>(item);
                         if (column != nullptr)
                         {
@@ -294,8 +313,9 @@ namespace SnooDom
 
 
         public:
-            SnooDomFullUIVisitor(Brush^ forgroundBrush, ICommandFactory^ commandFactory, IStyleProvider^ styleProvider)
+            SnooDomFullUIVisitor(Brush^ forgroundBrush, ICommandFactory^ commandFactory, IStyleProvider^ styleProvider, int quoteDepth = 0)
             {
+                _quoteDepth = quoteDepth;
                 _styleProvider = styleProvider;
                 _forgroundBrush = forgroundBrush;
                 _commandFactory = commandFactory;
@@ -305,12 +325,12 @@ namespace SnooDom
             RichTextBlock^ Result;
             StackPanel^ ResultGroup = nullptr;
             Windows::UI::Xaml::Documents::Paragraph^ _currentParagraph;
-
+            int _quoteDepth;
 
             void Visit(Text* text)
             {
                 auto madeRun = ref new Run();
-                madeRun->Text = toPlatformString(text->Contents);
+                madeRun->Text = htmlDecodeToPlatformString(text->Contents, dynamic_cast<IMarkdownUtility^>(_styleProvider), _quoteDepth);
                 _textLengthInCurrent += text->Contents.size();
 
                 if (text->Italic)
@@ -482,7 +502,7 @@ namespace SnooDom
                     else
                     {
                         inlineContainer = ref new Windows::UI::Xaml::Documents::InlineUIContainer();
-                        SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider);
+                        SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider, _quoteDepth);
                         //cant be null in this category
                         for each(auto item in link->Display)
                             item->Accept(&fullUIVisitor);
@@ -517,6 +537,7 @@ namespace SnooDom
 
             void Visit(Quote* code)
             {
+                _quoteDepth++;
                 SnooDomCategoryVisitor categoryVisitor;
                 UIElement^ result = nullptr;
                 for each(auto item in code->Children)
@@ -533,11 +554,11 @@ namespace SnooDom
                         item->Accept(&plainTextVisitor);
 
 
-                    result = ref new MarkdownQuote(toPlatformString(plainTextVisitor.Result), _styleProvider->TextBlockStyle);
+                    result = ref new MarkdownQuote(htmlDecodeToPlatformString(plainTextVisitor.Result, dynamic_cast<IMarkdownUtility^>(_styleProvider), _quoteDepth), _styleProvider->TextBlockStyle);
                 }
                 else
                 {
-                    SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider);
+                    SnooDomFullUIVisitor fullUIVisitor(_forgroundBrush, _commandFactory, _styleProvider, _quoteDepth);
                     //cant be null in this category
                     for each(auto item in code->Children)
                         item->Accept(&fullUIVisitor);
@@ -554,6 +575,7 @@ namespace SnooDom
                 }
 
                 DirectlyPlaceUIContent(result);
+                _quoteDepth--;
             }
 
             void Visit(OrderedList* orderedList)
