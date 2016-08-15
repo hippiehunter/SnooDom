@@ -103,7 +103,7 @@ namespace SnooDom
             auto textBlock = ref new TextBlock();
             textBlock->Text = value != nullptr ? value : "";
             if (StyleProvider->TextBlockStyle != nullptr)
-                textBlock->Style = StyleProvider->TextBlockStyle;
+                textBlock->SetValue(FrameworkElement::StyleProperty, StyleProvider->TextBlockStyle);
             return textBlock;
         }
 
@@ -654,8 +654,19 @@ namespace SnooDom
                     {
                         SnooDomPlainTextVisitor visitor;
                         markdownObject->document->Accept(&visitor);
-                        auto plainControl = markdownControl->MakePlain(toPlatformString(visitor.Result));
-                        markdownControl->Content = plainControl;
+                        auto visitorResult = toPlatformString(visitor.Result);
+                        auto existingTextBlock = dynamic_cast<TextBlock^>(markdownControl->Content);
+                        if (existingTextBlock != nullptr)
+                        {
+                            if (existingTextBlock->Text != visitorResult)
+                                existingTextBlock->Text = visitorResult;
+                            
+                        }
+                        else
+                        {
+                            auto plainControl = markdownControl->MakePlain(visitorResult);
+                            markdownControl->Content = plainControl;
+                        }
                         break;
                     }
                     case MarkdownCategory::Formatted:
@@ -680,7 +691,17 @@ namespace SnooDom
                 else
                 {
                     auto markdownString = dynamic_cast<String^>(markdownData);
-                    markdownControl->Content = markdownControl->MakePlain(markdownString != nullptr ? markdownString : "");
+
+                    auto existingTextBlock = dynamic_cast<TextBlock^>(markdownControl->Content);
+                    if (existingTextBlock != nullptr)
+                    {
+                        existingTextBlock->Text = markdownString != nullptr ? markdownString : "";
+                    }
+                    else
+                    {
+                        auto plainControl = markdownControl->MakePlain(markdownString != nullptr ? markdownString : "");
+                        markdownControl->Content = plainControl;
+                    }
                 }
             }
             catch (Platform::Exception^ ex)
