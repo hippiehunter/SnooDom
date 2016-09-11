@@ -18,12 +18,14 @@ using std::vector;
 
 namespace SnooDom
 {
+    [Windows::Foundation::Metadata::WebHostHidden]
     public interface class ICommandFactory
     {
     public:
         Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::Documents::Hyperlink^, Windows::UI::Xaml::Documents::HyperlinkClickEventArgs^>^ MakeLinkCommand(Platform::String^ url);
     };
 
+    [Windows::Foundation::Metadata::WebHostHidden]
     public interface class IStyleProvider
     {
     public:
@@ -33,12 +35,14 @@ namespace SnooDom
         property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get(); }
     };
 
+    [Windows::Foundation::Metadata::WebHostHidden]
     public interface class IMarkdownUtility
     {
     public:
         virtual Platform::String^ HTMLDecode(Platform::String^ input, int recurseCount);
     };
 
+    [Windows::Foundation::Metadata::WebHostHidden]
     public ref class MarkdownHelper sealed : ICommandFactory, IStyleProvider
     {
     public:
@@ -56,6 +60,7 @@ namespace SnooDom
         virtual property Windows::UI::Xaml::Style^ RunStyle { Windows::UI::Xaml::Style^ get() { return dynamic_cast<Windows::UI::Xaml::Style^>(Application::Current->Resources->Lookup("MarkdownRunStyle")); } }
     };
 
+    [Windows::Foundation::Metadata::WebHostHidden]
     public ref class MarkdownControl sealed : ContentControl
     {
     private:
