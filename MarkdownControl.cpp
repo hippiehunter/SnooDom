@@ -344,6 +344,8 @@ namespace SnooDom
                 if (text->Bold)
                     madeRun->FontWeight = FontWeights::Bold;
 
+                if (text->Strike)
+                  madeRun->TextDecorations = TextDecorations::Strikethrough;
 
                 if (text->HeaderSize != 0)
                 {
